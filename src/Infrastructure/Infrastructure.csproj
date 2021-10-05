@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Mappings\**" />
+    <EmbeddedResource Remove="Mappings\**" />
+    <None Remove="Mappings\**" />
+  </ItemGroup>
+
+  <ItemGroup>
 	<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.10" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.10" />
 	<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.10">
@@ -15,6 +21,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\SeedData\" />
   </ItemGroup>
 
 </Project>
