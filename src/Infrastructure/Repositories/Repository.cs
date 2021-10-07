@@ -1,5 +1,6 @@
 ﻿using Core.Entities;
 using Core.Interfaces;
+using Core.Specifications;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,6 +30,21 @@ namespace Infrastructure.Repositories
         public async Task<IReadOnlyList<TEntity>> ListAllAsync()
         {
             return await _dbContext.ToListAsync();
+        }
+
+        public async Task<TEntity> GetEntityWithSpec(ISpecification<TEntity> specification)
+        {
+            return await ApplySpecification(specification).FirstOrDefaultAsync();
+        }
+
+        public async Task<IReadOnlyList<TEntity>> ListAsync(ISpecification<TEntity> specification)
+        {
+            return await ApplySpecification(specification).ToListAsync();
+        }
+
+        private IQueryable<TEntity> ApplySpecification(ISpecification<TEntity> specification)
+        {
+            return SpecificationEvaluator<TEntity>.GetQuery(_dbContext.AsQueryable(), specification);
         }
     }
 }
