@@ -1,6 +1,7 @@
 using API.Extensions;
 using API.Middleware;
 using Infrastructure.Data;
+using Infrastructure.Identity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -25,8 +26,12 @@ namespace API
         {
             services.AddControllers();
             services.AddAutoMapper(typeof(Startup));
+
             services.AddDbContext<StoreContext>(options
                 => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddDbContext<AppIdentityDbContext>(options
+                => options.UseSqlite(Configuration.GetConnectionString("IdentityConnection")));
 
             services.AddSingleton<IConnectionMultiplexer>(config =>
             {
@@ -35,6 +40,7 @@ namespace API
             });
                 
             services.AddApplicationServices();
+            services.AddIdentityServices();
             services.AddSwaggerDocumentation();
         }
 
