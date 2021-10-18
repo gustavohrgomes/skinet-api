@@ -40,7 +40,7 @@ namespace API
             });
                 
             services.AddApplicationServices();
-            services.AddIdentityServices();
+            services.AddIdentityServices(Configuration);
             services.AddSwaggerDocumentation();
         }
 
@@ -62,6 +62,7 @@ namespace API
 
             app.UseStaticFiles();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
