@@ -20,7 +20,7 @@ namespace Infrastructure.Repositories
             _dbContext = context.Set<TEntity>();
         }
 
-        public async Task<TEntity> GeByIdAsync(int id)
+        public async Task<TEntity> GetByIdAsync(int id)
         {
             return await _dbContext.FindAsync(id);
         }

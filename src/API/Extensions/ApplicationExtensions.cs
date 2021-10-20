@@ -17,6 +17,7 @@ namespace API.Extensions
             services.AddScoped<IBasketRepository, BasketRepository>();
 
             services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IOrderService, OrderService>();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

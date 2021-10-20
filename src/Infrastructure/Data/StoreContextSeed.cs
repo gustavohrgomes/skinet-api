@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.OrderAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -31,6 +32,7 @@ namespace Infrastructure.Data
             await SeedBrands(context);
             await SeedProductTypes(context);
             await SeedProducts(context);
+            await SeedDeliveryMethods(context);
         }
 
         private static async Task SeedBrands(StoreContext context)
@@ -78,6 +80,23 @@ namespace Infrastructure.Data
                 foreach (var product in products)
                 {
                     context.Products.Add(product);
+                }
+
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedDeliveryMethods(StoreContext context)
+        {
+            if (!context.DeliveryMethods.Any())
+            {
+                var data = File.ReadAllText("../Infrastructure/Data/SeedData/delivery.json");
+
+                var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(data);
+
+                foreach (var deliveryMethod in deliveryMethods)
+                {
+                    context.DeliveryMethods.Add(deliveryMethod);
                 }
 
                 await context.SaveChangesAsync();

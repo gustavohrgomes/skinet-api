@@ -7,7 +7,7 @@ namespace Core.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {
-        Task<TEntity> GeByIdAsync(int id);
+        Task<TEntity> GetByIdAsync(int id);
         Task<IReadOnlyList<TEntity>> ListAllAsync();
         Task<TEntity> GetEntityWithSpec(ISpecification<TEntity> specification);
         Task<IReadOnlyList<TEntity>> ListAsync(ISpecification<TEntity> specification);
