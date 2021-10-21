@@ -20,6 +20,22 @@ namespace Infrastructure.Repositories
             _dbContext = context.Set<TEntity>();
         }
 
+        public void Add(TEntity entity)
+        {
+            _dbContext.Add(entity);
+        }
+
+        public void Update(TEntity entity)
+        {
+            _context.Set<TEntity>().Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+        }
+
+        public void Delete(TEntity entity)
+        {
+            _dbContext.Remove(entity);
+        }
+
         public async Task<TEntity> GetByIdAsync(int id)
         {
             return await _dbContext.FindAsync(id);
