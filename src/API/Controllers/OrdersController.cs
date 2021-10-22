@@ -6,13 +6,10 @@ using AutoMapper;
 using Core.Entities.OrderAggregate;
 using Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -27,6 +24,34 @@ namespace API.Controllers
         {
             _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IReadOnlyList<OrderResponse>>> GetOrders()
+        {
+            var email = User.RetrieveEmailFromPrincipal();
+
+            var orders = await _orderService.GetOrdersForUserAsync(email);
+
+            return Ok(_mapper.Map<IReadOnlyList<OrderResponse>>(orders));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<OrderResponse>> GetOrderByIdForUser(int id)
+        {
+            var email = User.RetrieveEmailFromPrincipal();
+
+            var order = await _orderService.GetOrderByIdAsync(id, email);
+
+            if (order is null) return NotFound(new ApiResponse((int)HttpStatusCode.NotFound, "Order Not Found"));
+
+            return Ok(_mapper.Map<OrderResponse>(order));
+        }
+
+        [HttpGet("delivery-methods")]
+        public async Task<ActionResult<IReadOnlyList<DeliveryMethod>>> GetDeliveryMethods()
+        {
+            return Ok(await _orderService.GetDeliveryMethodsAsync());
         }
 
         [HttpPost]

@@ -9,6 +9,7 @@ namespace API.Helpers
 {
     public class ProductUrlResolver : IValueResolver<Product, ProductResponse, string>
     {
+        
         private readonly IConfiguration _configuration;
 
         public ProductUrlResolver(IConfiguration configuration)
