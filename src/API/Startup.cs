@@ -28,10 +28,10 @@ namespace API
             services.AddAutoMapper(typeof(Startup));
 
             services.AddDbContext<StoreContext>(options
-                => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
+                => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"), options => options.EnableRetryOnFailure(10)));
 
             services.AddDbContext<AppIdentityDbContext>(options
-                => options.UseSqlite(Configuration.GetConnectionString("IdentityConnection")));
+                => options.UseNpgsql(Configuration.GetConnectionString("IdentityConnection"), options => options.EnableRetryOnFailure(10)));
 
             services.AddSingleton<IConnectionMultiplexer>(config =>
             {

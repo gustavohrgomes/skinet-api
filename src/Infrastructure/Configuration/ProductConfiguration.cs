@@ -20,8 +20,7 @@ namespace Infrastructure.Configuration
                 .HasMaxLength(100);
 
             builder.Property(p => p.Description)
-                .IsRequired()
-                .HasMaxLength(180);
+                .IsRequired();
 
             builder.Property(p => p.Price)
                 .HasColumnType("decimal(18,2)");

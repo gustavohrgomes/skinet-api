@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -14,7 +15,9 @@ namespace Infrastructure.Data
 {
     public class StoreContextSeed
     {
-        public static async Task SeedAsync(StoreContext context, ILoggerFactory loggerFactory)
+        private static readonly string _path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+        public static async Task SeedAsync(StoreContext context, ILogger logger)
         {
             try
             {
@@ -22,9 +25,8 @@ namespace Infrastructure.Data
             }
             catch (Exception ex)
             {
-                var logger = loggerFactory.CreateLogger<StoreContextSeed>();
                 logger.LogError(ex.Message);
-            }
+            };
         }
 
         private static async Task SeedDatabase(StoreContext context)
@@ -39,7 +41,7 @@ namespace Infrastructure.Data
         {
             if (!context.ProductBrands.Any())
             {
-                var brandsData = File.ReadAllText("../Infrastructure/Data/SeedData/brands.json");
+                var brandsData = File.ReadAllText(_path + @"Data/SeedData/brands.json");
 
                 var brands = JsonSerializer.Deserialize<List<ProductBrand>>(brandsData);
 
@@ -56,7 +58,7 @@ namespace Infrastructure.Data
         {
             if (!context.ProductTypes.Any())
             {
-                var typesData = File.ReadAllText("../Infrastructure/Data/SeedData/types.json");
+                var typesData = File.ReadAllText(_path + @"Data/SeedData/types.json");
 
                 var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
 
@@ -73,7 +75,7 @@ namespace Infrastructure.Data
         {
             if (!context.Products.Any())
             {
-                var productsData = File.ReadAllText("../Infrastructure/Data/SeedData/products.json");
+                var productsData = File.ReadAllText(_path + @"Data/SeedData/products.json");
 
                 var products = JsonSerializer.Deserialize<List<Product>>(productsData);
 
@@ -90,7 +92,7 @@ namespace Infrastructure.Data
         {
             if (!context.DeliveryMethods.Any())
             {
-                var data = File.ReadAllText("../Infrastructure/Data/SeedData/delivery.json");
+                var data = File.ReadAllText(_path + @"Data/SeedData/delivery.json");
 
                 var deliveryMethods = JsonSerializer.Deserialize<List<DeliveryMethod>>(data);
 
