@@ -1,0 +1,62 @@
+services:
+  skinetdb:
+    container_name: skinetdb
+    image: postgres
+    environment: 
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=@Admin#123!
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  
+  redis:
+    container_name: redis
+    image: redis:alpine
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce 
+    restart: always
+    ports: 
+      - "8080:8000"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=root
+      - HTTP_PASSWORD=secret
+    ports:
+      - 8081:8081
+    depends_on:
+      - redis
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@email.com
+      - PGADMIN_DEFAULT_PASSWORD=@Admin#123!
+    restart: always
+    ports: 
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
+
+volumes:
+  portainer_data:
+  redis-data:
+  postgres_data:
+  pgadmin_data:
