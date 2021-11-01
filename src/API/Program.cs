@@ -1,3 +1,4 @@
+using API.Extensions;
 using Core.Entities.Identitiy;
 using Infrastructure.Data;
 using Infrastructure.Identity;
@@ -14,32 +15,26 @@ namespace API
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-            using (var scope = host.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-                try
+            CreateHostBuilder(args)
+                .Build()
+                .MigrateDatabase<StoreContext>((context, services) => 
                 {
-                    var context = services.GetRequiredService<StoreContext>();
-                    await context.Database.MigrateAsync();
-                    await StoreContextSeed.SeedAsync(context, loggerFactory);
-
+                    var logger = services.GetService<ILogger<StoreContextSeed>>();
+                    StoreContextSeed
+                        .SeedAsync(context, logger)
+                        .Wait();
+                })
+                .MigrateIndentiyDatabase<AppIdentityDbContext>((identityContext, services) => 
+                {
+                    var logger = services.GetService<ILogger<AppIdentityDbContextSeed>>();
                     var userManager = services.GetRequiredService<UserManager<AppUser>>();
-                    var identityContext = services.GetRequiredService<AppIdentityDbContext>();
-                    await identityContext.Database.MigrateAsync();
-                    await AppIdentityDbContextSeed.SeedUserAsync(userManager);
-                }
-                catch (Exception ex)
-                {
-                    var logger = loggerFactory.CreateLogger<Program>();
-                    logger.LogError(ex, "An error occured during migrating the database");
-                }
-            }
-
-            host.Run();
+                    AppIdentityDbContextSeed
+                        .SeedUserAsync(userManager)
+                        .Wait();
+                }) 
+                .Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
